@@ -22,8 +22,11 @@ float GLUTWindow::moveSpeedUpDown;
 bool GLUTWindow::isFirstMouse;
 bool GLUTWindow::firstRender;
 
-//float GLUTWindow::smooth_factor;
+float GLUTWindow::smooth_factor;
 
+Lights* GLUTWindow::lights = new Lights();
+OperacjeNaWektorach* GLUTWindow::operacjeNaWektorach = new OperacjeNaWektorach();
+SystemDrzew* GLUTWindow::systemDrzew = new SystemDrzew();
 
 GLUTWindow::GLUTWindow(int* argc_, char **argv_)
 {
@@ -38,8 +41,8 @@ GLUTWindow::GLUTWindow(int* argc_, char **argv_)
 	cameraPos = glm::vec3(0.0f, 1.0f, 3.0f);
 	cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	lastX = (float)win_width / 2;
-	lastY = (float)win_height / 2;
+	lastX = win_width / 2;
+	lastY = win_height / 2;
 	yaw = 0;
 	pitch = 0;
 	moveSpeedFrontBack = 0.0f;
@@ -47,7 +50,7 @@ GLUTWindow::GLUTWindow(int* argc_, char **argv_)
 	moveSpeedUpDown = 0.0f;
 	isFirstMouse = true;
 	firstRender = true;
-	//smooth_factor = 0.11111f;
+	smooth_factor = 0.11111f;
 }
 
 GLUTWindow::GLUTWindow(int posX, int posY, int width, int height, unsigned int mode, std::string name, int* argc_, char **argv_) {
@@ -62,80 +65,52 @@ GLUTWindow::GLUTWindow(int posX, int posY, int width, int height, unsigned int m
 	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	lastX = (float)win_width / 2;
-	lastY = (float)win_height / 2;
+	lastX = win_width / 2;
+	lastY = win_height / 2;
 	yaw = 0;
 	pitch = 0;
 	moveSpeedFrontBack = 0.0f;
 	moveSpeedLeftRight = 0.0f;
 	moveSpeedUpDown = 0.0f;
 	isFirstMouse = true;
-	firstRender = true;
-	//smooth_factor = 0.11111f;
+	firstRender - true;
+	smooth_factor = 0.11111f;
 }
 
-void GLUTWindow::generateTerrain(int iterations, int which, float increment) { // TODO: flatten the terrain and maybe try another algorithm
+void GLUTWindow::generateTerrain(int iterations) { // TODO: flatten the terrain and maybe try another algorithm
 	int i = 0;
-	switch (which) {
-	case 0: {
-		int x1 = rand() % terrain_size;
-		int z1 = rand() % terrain_size;
-		while (i < iterations) {
-			terrain[x1][z1] += increment;
-			int move = rand() % 4;
-			switch (move) {
-			case 0:
-				if (x1 + 1 > terrain_size - 1)
-					x1 = 0;
-				else
-					x1++;
-				break;
-			case 1:
-				if (x1 - 1 < 0)
-					x1 = terrain_size - 1;
-				else
-					x1--;
-				break;
-			case 2:
-				if (z1 + 1 > terrain_size - 1)
-					z1 = 0;
-				else
-					z1++;
-				break;
-			case 3:
-				if (z1 - 1 < 0)
-					z1 = terrain_size - 1;
-				else
-					z1--;
-				break;
-			}
-			++i;
+	int x = rand() % terrain_size;
+	int z = rand() % terrain_size;
+	while (i < iterations) {
+		terrain[x][z] += 2.0f;
+		int move = rand() % 4;
+		switch (move) {
+		case 0:
+			if (x + 1 > terrain_size-1)
+				x = 0;
+			else
+				x++;
+			break;
+		case 1:
+			if (x - 1 < 0)
+				x = terrain_size-1;
+			else
+				x--;
+			break;
+		case 2:
+			if (z + 1 > terrain_size-1)
+				z = 0;
+			else
+				z++;
+			break;
+		case 3:
+			if (z - 1 < 0)
+				z = terrain_size-1;
+			else
+				z--;
+			break;
 		}
-	}
-		break;
-	case 1:
-	{
-		while (i < iterations) {
-			int x1 = rand() % terrain_size;
-			int z1 = rand() % terrain_size;
-			int x2 = rand() % terrain_size;
-			int z2 = rand() % terrain_size;
-			int a = (z2 - z1);
-			int b = -(x2 - x1);
-			int c = -(x1*(z2 - z1)) + z1*(x2 - x1);
-			for (int x = 0; x < terrain_size; x++) {
-				for (int z = 0; z < terrain_size; z++) {
-					if (a * x + b * z - c > 0)
-						terrain[x][z] += increment;
-					else
-						terrain[x][z] -= increment;
-				}
-			}
-			++i;
-		}
-	}
-		break;
-	
+		++i;
 	}
 }
 
@@ -156,7 +131,7 @@ void GLUTWindow::renderTerrain(unsigned int mode) {
 				glColor3f(0.0f, 1.0f, 0.0f);
 				glScalef(1.5f, 1.5f, 1.5f);
 				glBegin(GL_POINTS);
-				glVertex3f((GLfloat)x, (GLfloat)terrain[x][z], (GLfloat)z);
+					glVertex3f(x, terrain[x][z], z);
 				glEnd();
 			}
 		}
@@ -166,14 +141,14 @@ void GLUTWindow::renderTerrain(unsigned int mode) {
 			for (int z = 0; z < terrain_size - 1; ++z) {
 				glColor3f(0.5f, 0.5f, 0.5f);
 				glBegin(GL_TRIANGLES);
-				glVertex3f((GLfloat)x*0.1f, (GLfloat)terrain[x][z] * 0.1f, (GLfloat)z*0.1f);
-				glVertex3f((GLfloat)x*0.1f, (GLfloat)terrain[x][z + 1] * 0.1f, (GLfloat)(z + 1)*0.1f);
-				glVertex3f((GLfloat)(x + 1)*0.1f, (GLfloat)terrain[x + 1][z + 1] * 0.1f, (GLfloat)(z + 1)*0.1f);
+				glVertex3f(x*0.1f, terrain[x][z] * 0.1f, z*0.1f);
+				glVertex3f(x*0.1f, terrain[x][z + 1] * 0.1f, (z + 1)*0.1);
+				glVertex3f((x + 1)*0.1f, terrain[x + 1][z + 1] * 0.1f, (z + 1)*0.1f);
 				glEnd();
 				glBegin(GL_TRIANGLES);
-				glVertex3f((GLfloat)(x + 1)*0.1f, (GLfloat)terrain[x + 1][z + 1] * 0.1f, (GLfloat)(z + 1)*0.1f);
-				glVertex3f((GLfloat)(x + 1)*0.1f, (GLfloat)terrain[x + 1][z] * 0.1f, (GLfloat)z*0.1f);
-				glVertex3f((GLfloat)x*0.1f, (GLfloat)terrain[x][z] * 0.1f, (GLfloat)z*0.1f);
+				glVertex3f((x + 1)*0.1f, terrain[x + 1][z + 1] * 0.1f, (z + 1)*0.1f);
+				glVertex3f((x + 1)*0.1f, terrain[x + 1][z] * 0.1f, z*0.1f);
+				glVertex3f(x*0.1f, terrain[x][z] * 0.1f, z*0.1f);
 				glEnd();
 			}
 		}
@@ -182,11 +157,18 @@ void GLUTWindow::renderTerrain(unsigned int mode) {
 		for (int x = 0; x < terrain_size - 1; ++x) {
 			for (int z = 0; z < terrain_size - 1; ++z) {
 				glColor3f(0.5f, 0.5f, 0.5f);
+				const float scale = 0.1f;
 				glBegin(GL_QUADS);
-				glVertex3f((GLfloat)x*0.1f, (GLfloat)terrain[x][z] * 0.1f, (GLfloat)z*0.1f);
-				glVertex3f((GLfloat)x*0.1f, (GLfloat)terrain[x][z + 1] * 0.1f, (GLfloat)(z + 1)*0.1f);
-				glVertex3f((GLfloat)(x + 1)*0.1f, (GLfloat)terrain[x + 1][z + 1] * 0.1f, (GLfloat)(z + 1)*0.1f);
-				glVertex3f((GLfloat)(x + 1)*0.1f, (GLfloat)terrain[x + 1][z] * 0.1f, (GLfloat)z*0.1f);
+					float vector1[3] = { x*scale, terrain[x][z] * scale, z*scale };
+					float vector2[3] = { x*scale, terrain[x][z + 1] * scale, (z + 1)*scale };
+					float vector3[3] = { (x + 1)*scale, terrain[x + 1][z + 1] * scale, (z + 1)*scale };
+					float vector4[3] = { (x + 1)*scale, terrain[x + 1][z] * scale, z*scale };
+					float wynik[3];
+					glNormal3fv(operacjeNaWektorach->jednostkowyWektorNormalny3fv(vector1, vector2, vector3, wynik));
+					glVertex3fv(vector1);
+					glVertex3fv(vector2);
+					glVertex3fv(vector3);
+					glVertex3fv(vector4);
 				glEnd();
 			}
 		}
@@ -197,6 +179,8 @@ void GLUTWindow::renderTerrain(unsigned int mode) {
 void GLUTWindow::renderScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	lights->obsluzOswietlenie();
+
 	glLoadIdentity();
 
 	gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z,
@@ -204,15 +188,18 @@ void GLUTWindow::renderScene() {
 			cameraUp.x, cameraUp.y, cameraUp.z);
 
 	glColor3f(0.0f, 0.0f, 0.5f);
-	//glBegin(GL_QUADS);
-	//	glVertex3f(0.0f, 0.1f, 0.0f);
-	//	glVertex3f(0.0f, 0.1f, terrain_size*0.1f);
-	//	glVertex3f(terrain_size*0.1f, 0.1f, terrain_size*0.1f);
-	//	glVertex3f(terrain_size*0.1f, 0.1f, 0.0f);
-	//glEnd();
+	glBegin(GL_QUADS);
+		glVertex3f(0.0f, 0.1f, 0.0f);
+		glVertex3f(0.0f, 0.1f, terrain_size*0.1f);
+		glVertex3f(terrain_size*0.1f, 0.1f, terrain_size*0.1f);
+		glVertex3f(terrain_size*0.1f, 0.1f, 0.0f);
+	glEnd();
 
-	renderTerrain(1);
-
+	glShadeModel(GL_SMOOTH);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	renderTerrain(2);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	//systemDrzew->Rysuj();
 	glutSwapBuffers();
 }
 
@@ -268,16 +255,16 @@ void GLUTWindow::keyStrokes() {
 }
 void GLUTWindow::processMouseMovement(int x, int y) {
 	if (isFirstMouse) {
-		lastX = (float)x;
-		lastY = (float)y;
+		lastX = x;
+		lastY = y;
 		isFirstMouse = false;
 	}
 
 	float offsetX = x - lastX;
 	float offsetY = lastY - y;
 
-	lastX = (float)x;
-	lastY = (float)y;
+	lastX = x;
+	lastY = y;
 
 	float sensitivity = 0.1f;
 	offsetX *= sensitivity;
@@ -359,12 +346,12 @@ void GLUTWindow::smootherTerrain(unsigned int type) {
 }
 
 void GLUTWindow::init() {
-	srand(time(NULL));
-	//srand(0);
-	//for (int i = 0; i < 100; i++)
-		generateTerrain(1000, 1, 0.4f);
+	//srand(time(NULL));
+	srand(0);
+	for (int i = 0; i < 5; i++)
+		generateTerrain(3000);
 
-	smootherTerrain(0);
+	smootherTerrain(1);
 	printTerrain();
 
 	glutInit(argc, argv);

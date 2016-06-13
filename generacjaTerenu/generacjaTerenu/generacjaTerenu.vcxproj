@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -74,10 +74,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\matipu\Source\Repos\generacjaTerenu2\generacjaTerenu\glm;C:\Users\matipu\Source\Repos\generacjaTerenu2\generacjaTerenu\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\matipu\Source\Repos\generacjaTerenu2\generacjaTerenu\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,16 +126,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Drawer.cpp" />
+    <ClCompile Include="Drzewo.cpp" />
+    <ClCompile Include="Galaz.cpp" />
+    <ClCompile Include="GalazOpenGL.cpp" />
     <ClCompile Include="GLUTWindow.cpp" />
+    <ClCompile Include="Lights.cpp" />
     <ClCompile Include="Okno.cpp" />
     <ClCompile Include="OknoOpenGL.cpp" />
+    <ClCompile Include="OperacjeNaWektorach.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="SystemDrzew.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Drawer.h" />
+    <ClInclude Include="Drzewo.h" />
+    <ClInclude Include="Galaz.h" />
+    <ClInclude Include="GalazOpenGL.h" />
     <ClInclude Include="GLUTWindow.h" />
+    <ClInclude Include="Lights.h" />
     <ClInclude Include="Okno.h" />
     <ClInclude Include="OknoOpenGL.h" />
+    <ClInclude Include="OperacjeNaWektorach.h" />
+    <ClInclude Include="SystemDrzew.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

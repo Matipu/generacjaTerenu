@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\drzewa">
+      <UniqueIdentifier>{49135fd8-3b10-4da8-9ddd-6e340737ee40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\drzewa">
+      <UniqueIdentifier>{8c2a0791-1da2-447b-97dc-8ffc39786e20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -30,6 +36,24 @@
     <ClCompile Include="GLUTWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Drzewo.cpp">
+      <Filter>Source Files\drzewa</Filter>
+    </ClCompile>
+    <ClCompile Include="Galaz.cpp">
+      <Filter>Source Files\drzewa</Filter>
+    </ClCompile>
+    <ClCompile Include="GalazOpenGL.cpp">
+      <Filter>Source Files\drzewa</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights.cpp">
+      <Filter>Source Files\drzewa</Filter>
+    </ClCompile>
+    <ClCompile Include="OperacjeNaWektorach.cpp">
+      <Filter>Source Files\drzewa</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemDrzew.cpp">
+      <Filter>Source Files\drzewa</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Okno.h">
@@ -43,6 +67,24 @@
     </ClInclude>
     <ClInclude Include="GLUTWindow.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GalazOpenGL.h">
+      <Filter>Header Files\drzewa</Filter>
+    </ClInclude>
+    <ClInclude Include="Drzewo.h">
+      <Filter>Header Files\drzewa</Filter>
+    </ClInclude>
+    <ClInclude Include="Galaz.h">
+      <Filter>Header Files\drzewa</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Header Files\drzewa</Filter>
+    </ClInclude>
+    <ClInclude Include="OperacjeNaWektorach.h">
+      <Filter>Header Files\drzewa</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemDrzew.h">
+      <Filter>Header Files\drzewa</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
